@@ -5,7 +5,12 @@ const PRIVATE_CHANNEL_INDEX = 7,
 	PRIVATE_CHANNEL_NAME = 'Proxy',
 	PUBLIC_ENABLE = true,
 	PUBLIC_MATCH = /^!([^!].*)$/,
-	LOGIN_MESSAGE = true
+	LOGIN_MESSAGE = true,
+	CLI_MODE = true,
+	readline = require('readline'),
+	log = require('log')('Command'),
+	rl = readline.createInterface({ input: process.stdin, output: process.stdout })
+	
 
 class Command {
 	constructor(mod) {
@@ -105,6 +110,9 @@ class Command {
 
 				if(match) return handleCommand(match[1])
 			})
+		rl.on('line', (cmd) => {
+			if(CLI_MODE)handleCommand(cmd)
+		})
 	}
 
 	exec(str) {
@@ -161,6 +169,7 @@ class Command {
 			authorName: '',
 			message: msg
 		})
+		if(CLI_MODE)log.info(msg)
 	}
 }
 
