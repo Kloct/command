@@ -1,12 +1,12 @@
 'use strict'
 
-const PRIVATE_CHANNEL_INDEX = 7,
-	PRIVATE_CHANNEL_ID = -2 >>> 0,
+const PRIVATE_CHANNEL_INDEX = 6,
+	PRIVATE_CHANNEL_ID = -3 >>> 0,
 	PRIVATE_CHANNEL_NAME = 'Proxy',
 	PUBLIC_ENABLE = true,
-	PUBLIC_MATCH = /^!([^!].*)$/,
+	PUBLIC_MATCH = /^!([^$].*)$/,
 	LOGIN_MESSAGE = true,
-	CLI_MODE = true,
+	CLI_MODE = false,
 	readline = require('readline'),
 	log = require('log')('Command'),
 	rl = readline.createInterface({ input: process.stdin, output: process.stdout })
