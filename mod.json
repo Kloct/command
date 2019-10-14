@@ -1,6 +1,6 @@
 {
 	"name": "command",
-	"update": "github:kloct/command",
+	"update": "github:kloct/command@compat",
 	"title": "Command",
 	"author": "Pinkie Pie",
 	"description": "Add ingame chat commands to your mod."
