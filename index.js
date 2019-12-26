@@ -24,7 +24,7 @@ class Command {
 		mod.hook('S_LOAD_CLIENT_USER_SETTING', 'raw', () => {
 			if(!this.loaded && (this.loaded = true))
 				process.nextTick(() => {
-					mod.send('S_JOIN_PRIVATE_CHANNEL', 1, {
+					mod.send('S_JOIN_PRIVATE_CHANNEL', 2, {
 						index: PRIVATE_CHANNEL_INDEX,
 						id: PRIVATE_CHANNEL_ID,
 						unk: [],
@@ -35,13 +35,13 @@ class Command {
 				})
 		})
 
-		mod.hook('S_JOIN_PRIVATE_CHANNEL', 1, event => event.index === PRIVATE_CHANNEL_INDEX ? false : undefined)
+		mod.hook('S_JOIN_PRIVATE_CHANNEL', 2, event => event.index === PRIVATE_CHANNEL_INDEX ? false : undefined)
 		mod.hook('C_LEAVE_PRIVATE_CHANNEL', 1, event => event.index === PRIVATE_CHANNEL_INDEX ? false : undefined)
 
 		if(mod.patchVersion >= 28)
-			mod.hook('C_REQUEST_PRIVATE_CHANNEL_INFO', 1, event => {
+			mod.hook('C_REQUEST_PRIVATE_CHANNEL_INFO', 2, event => {
 				if(event.channelId === PRIVATE_CHANNEL_ID) {
-					mod.send('S_REQUEST_PRIVATE_CHANNEL_INFO', 1, {
+					mod.send('S_REQUEST_PRIVATE_CHANNEL_INFO', 2, {
 						owner: 1,
 						password: 0,
 						members: [],

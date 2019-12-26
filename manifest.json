@@ -1,8 +1,19 @@
 {
-	"data": {
-		"LICENSE": "WJ7YI+moTFb+uVrFjnzzhGJrnL9P2iqQe8NuED3hutI=",
-		"README.md": "qZg3lwSZ80/14mCt7K3rs19e5z0L0HQKUwzwgpBJeFA=",
-		"index.js": "KmOBmZhTFqXSX4DXVf7nCyNwVJ9o9wLksgAR/XP78XU=",
-		"mod.json": "YL89Ho/3Jzsp4gv5YfJn3ShYgfM4pN6ficxkgZACoKM="
-	}
+    "data": {
+        "LICENSE": "WJ7YI+moTFb+uVrFjnzzhGJrnL9P2iqQe8NuED3hutI=",
+        "index.js": "KmOBmZhTFqXSX4DXVf7nCyNwVJ9o9wLksgAR/XP78XU=",
+        "mod.json": "YL89Ho/3Jzsp4gv5YfJn3ShYgfM4pN6ficxkgZACoKM="
+    },
+    "defs": {
+        "C_CHAT": 1,
+        "C_LEAVE_PRIVATE_CHANNEL": 1,
+        "C_OP_COMMAND": 1,
+        "C_REQUEST_PRIVATE_CHANNEL_INFO": 2,
+        "C_WHISPER": 1,
+        "S_JOIN_PRIVATE_CHANNEL": 2,
+        "S_LOAD_CLIENT_USER_SETTING": "raw",
+        "S_LOGIN": "raw",
+        "S_PRIVATE_CHAT": 1,
+        "S_REQUEST_PRIVATE_CHANNEL_INFO": 2
+    }
 }
