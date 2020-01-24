@@ -6,15 +6,17 @@ const PRIVATE_CHANNEL_INDEX = 7,
 	PUBLIC_ENABLE = true,
 	PUBLIC_MATCH = /^!([^!].*)$/,
 	LOGIN_MESSAGE = true,
-	CLI_MODE = true,
 	readline = require('readline'),
-	log = require('log')('Command'),
 	rl = readline.createInterface({ input: process.stdin, output: process.stdout })
 	
 
 class Command {
 	constructor(mod) {
 		this.mod = mod
+		this.CLI_MODE = true
+
+		const {client} = mod.require
+		this.log = require('log')(`Command ${client.getIndex()+1}`)
 
 		this.loaded = false
 		this.hooks = {}
@@ -111,7 +113,11 @@ class Command {
 				if(match) return handleCommand(match[1])
 			})
 		rl.on('line', (cmd) => {
-			if(CLI_MODE)handleCommand(cmd)
+			if(this.CLI_MODE)handleCommand(cmd)
+			if(cmd===`command ${client.getIndex()+1}`){
+				this.CLI_MODE=!this.CLI_MODE
+				this.log.info(`Listen to Commands in CLI set to ${this.CLI_MODE}.`)
+			}
 		})
 	}
 
@@ -169,7 +175,7 @@ class Command {
 			authorName: '',
 			message: msg
 		})
-		if(CLI_MODE)log.info(msg)
+		if(this.CLI_MODE)this.log.info(msg)
 	}
 }
 
