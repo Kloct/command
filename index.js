@@ -147,7 +147,7 @@ class Command {
 		if(typeof cmd !== 'string') throw new Error('Command must be a string or array of strings')
 		if(cmd === '') throw new Error('Command must not be an empty string')
 
-		if(this.hooks[cmd = cmd.toLowerCase()]) throw new Error('Command already registered:', cmd)
+		if(this.hooks[cmd = cmd.toLowerCase()]) throw new Error(`Command already registered: ${cmd}`)
 
 		this.hooks[cmd] = cb
 	}
