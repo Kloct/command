@@ -1,6 +1,6 @@
 ## Cli Command
-Fork of command allowing for commands to be typed into cli.
-
+* Fork of command allowing for commands to be typed into cli.
+* Fully working for AION /w proxy ?command yourcommand
 ## Usage
 Custom chat commands may be preceded by `/!` or entered into the `/proxy` chat channel (overrides **Private Channel 8** by default). To pass strings containing spaces as arguments, enclose them in quotes (`""` or `''`). To enclude quotes or backslashes in arguments, precede them with a backslash `\`.
 

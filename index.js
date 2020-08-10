@@ -1,11 +1,7 @@
 'use strict'
 
-const PRIVATE_CHANNEL_INDEX = 7,
-	PRIVATE_CHANNEL_ID = -2 >>> 0,
-	PRIVATE_CHANNEL_NAME = 'Proxy',
-	PUBLIC_ENABLE = true,
-	PUBLIC_MATCH = /^!([^!].*)$/,
-	LOGIN_MESSAGE = true,
+const PUBLIC_ENABLE = true,
+	PUBLIC_MATCH = /^\?([^?].*)$/,
 	CLI_MODE = true,
 	readline = require('readline'),
 	log = require('log')('Command'),
@@ -16,42 +12,7 @@ class Command {
 	constructor(mod) {
 		this.mod = mod
 
-		this.loginHook = false
 		this.hooks = {}
-
-		mod.hook('S_LOGIN', 'raw', () => { this.loginHook = true })
-
-		mod.hook(mod.patchVersion < 90 ? 'S_LOAD_CLIENT_USER_SETTING' : 'S_REPLY_CLIENT_CHAT_OPTION_SETTING', 'raw', () => {
-			if(!this.loginHook) return
-
-			process.nextTick(() => {
-				mod.send('S_JOIN_PRIVATE_CHANNEL', 1, {
-					index: PRIVATE_CHANNEL_INDEX,
-					id: PRIVATE_CHANNEL_ID,
-					unk: [],
-					name: PRIVATE_CHANNEL_NAME
-				})
-
-				if(LOGIN_MESSAGE) this.message(`TERA Proxy enabled. Client version: ${mod.patchVersion} r${mod.protocolVersion}`)
-			})
-			this.loginHook = false
-		})
-
-		mod.hook('S_JOIN_PRIVATE_CHANNEL', 2, event => event.index === PRIVATE_CHANNEL_INDEX ? false : undefined)
-		mod.hook('C_LEAVE_PRIVATE_CHANNEL', 1, event => event.index === PRIVATE_CHANNEL_INDEX ? false : undefined)
-
-		if(mod.patchVersion >= 28)
-			mod.hook('C_REQUEST_PRIVATE_CHANNEL_INFO', 2, event => {
-				if(event.channelId === PRIVATE_CHANNEL_ID) {
-					mod.send('S_REQUEST_PRIVATE_CHANNEL_INFO', 2, {
-						owner: 1,
-						password: 0,
-						members: [],
-						friends: []
-					})
-					return false
-				}
-			})
 
 		let lastError = '',
 			hookOverride = (name, version, cb) => {
@@ -68,7 +29,7 @@ class Command {
 			},
 			handleCommand = message => {
 				try {
-					var args = parseArgs(stripOuterHTML(message))
+					var args = parseArgs(message)
 				}
 				catch(e) {
 					lastError = 'Syntax error: ' + e.message
@@ -90,30 +51,16 @@ class Command {
 				return false
 			}
 
-		// /! commands
-		hookOverride('C_OP_COMMAND', 1, event => handleCommand(event.command))
-
-		hookOverride('C_CHAT', 1, event => {
-			// Proxy channel
-			if(event.channel === 11 + PRIVATE_CHANNEL_INDEX) return handleCommand(event.message)
-
-			// Any channel with regex match
-			if(PUBLIC_ENABLE) {
-				const match = PUBLIC_MATCH.exec(stripOuterHTML(event.message))
-
-				if(match) return handleCommand(match[1])
-			}
-		})
-
 		// Whispers with regex match
 		if(PUBLIC_ENABLE)
-			hookOverride('C_WHISPER', 1, event => {
-				const match = PUBLIC_MATCH.exec(stripOuterHTML(event.message))
+			hookOverride('C_CHAT_WHISPER', 1, event => {
+				const match = PUBLIC_MATCH.exec(event.message)
 
 				if(match) return handleCommand(match[1])
 			})
+
 		rl.on('line', (cmd) => {
-			if(CLI_MODE)handleCommand(cmd)
+			if(CLI_MODE) handleCommand(cmd)
 		})
 	}
 
@@ -164,14 +111,13 @@ class Command {
 		delete this.hooks[cmd.toLowerCase()]
 	}
 
-	message(msg) {
-		this.mod.send('S_PRIVATE_CHAT', 1, {
-			channel: PRIVATE_CHANNEL_ID,
-			authorID: 0,
-			authorName: '',
+	message(msg) { // message ingame | find something that can be used without get kicked from server q.q
+	/*	this.mod.send('C_CHAT_WHISPER', 1, {
+			name: 'Proxy',
 			message: msg
-		})
-		if(CLI_MODE)log.info(msg)
+		}) 
+	*/ 
+		if(CLI_MODE) log.info(msg)
 	}
 }
 
@@ -196,13 +142,8 @@ function makeSubCommandHandler(_obj, ctx) {
 	}
 }
 
-function stripOuterHTML(str) {
-	return str.replace(/^<[^>]+>|<\/[^>]+><[^\/][^>]*>|<\/[^>]+>$/g, '')
-}
-
 function parseArgs(str) {
-	const parseHTML = /.*?<\/.*?>/g,
-		args = []
+	const args = []
 
 	let arg = '',
 		quote = ''
@@ -211,17 +152,6 @@ function parseArgs(str) {
 		c = str[i]
 
 		switch(c) {
-			case '<':
-				parseHTML.lastIndex = i + 1
-
-				let len = parseHTML.exec(str)
-
-				if(!len) throw new Error('HTML parsing failure')
-
-				len = len[0].length
-				arg += str.substr(i, len + 1)
-				i += len
-				break
 			case '\\':
 				c = str[++i]
 
